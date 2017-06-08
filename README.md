@@ -1,1 +1,1 @@
-# progetto-2-metodi
+# Progetto 2 di Metodi per il Calcolo Scientifico
