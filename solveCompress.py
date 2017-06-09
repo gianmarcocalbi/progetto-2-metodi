@@ -9,7 +9,8 @@ from appJar import gui
 from scipy.fftpack.realtransforms import dct
 from scipy.fftpack.realtransforms import idct
 
-global C
+# VARIABILI GLOBALI
+BMP_PATH = K = L = TYPE = None
 
 
 class NewGui:
@@ -21,17 +22,37 @@ class NewGui:
 
 
         def press(btnName):
+            global BMP_PATH, K, L
             if btnName == "Quit":
                 app.stop()
+            elif btnName == "Submit":
+                BMP_PATH = app.getEntry("entryImagePath")
+                K = app.getEntry("entry_k")
+                L = app.getEntry("entry_l")
+
+                if BMP_PATH is "":
+                    app.errorBox("Missing image", "Select a valid image before submitting")
+                elif False: # Se l'immagine non è valida per formato, path o che altro# Se l'immagine non è valida per formato, path o che altro
+                    app.errorBox("Wrong image path", "Select a valid BPM image")
+                elif not isinstance(K, int):
+                    app.errorBox("Wrong K value", "Be sure to fill K field with an integer value")
+                elif not isinstance(L, int):
+                    app.errorBox("Wrong L value", "Be sure to fill L field with an integer value")
+                else:
+                    pass
+                    # tutti i controlli sono andati a buon fine
+                    # allora si può procedere con il calcolo delle matrici etc..
+                    # QUI LANCIA LA FUNZIONE CHE FA I CALCOLI
             else:
-                return
+                # impossibile entrare in questo branch
+                pass
 
         def selectImage(self):
             file = filedialog.askopenfile(mode='rb',title='Choose a file')
             if file is not None:
-                global C
-                C = file.name
-                app.setEntry("entryImagePath", C, callFunction=False)
+                global BMP_PATH
+                BMP_PATH = file.name
+                app.setEntry("entryImagePath", BMP_PATH, callFunction=False)
                 file.close()
             return
 
@@ -184,13 +205,13 @@ def primaParte(*args):
 ############################################### SECONDA PARTE - COMPRESSIONE JPEG
 def main(*args):
     #Avvio dell'interfaccia per selezionare l'immagine
-    root = Tk()
+    """root = Tk()
     root.geometry("750x200+300+300")
-    Example(root)
-    root.mainloop() 
+    NewGui(root)
+    root.mainloop()"""
     
     #Salvataggio del path dell'immagine C, caricamento immagine e stampa
-    storedImage = Image.open(C)
+    storedImage = Image.open(BMP_PATH)
     storedImage.show()
     
     #Passo dal canale RGB al canale in scala di grigi
