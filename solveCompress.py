@@ -51,9 +51,57 @@ class NewGui:
                     app.errorBox("Wrong L value", "Be sure to fill L field with an integer value")
                 else:
                     pass
-                    # tutti i controlli sono andati a buon fine
-                    # allora si può procedere con il calcolo delle matrici etc..
-                    # QUI LANCIA LA FUNZIONE CHE FA I CALCOLI
+                    ############################################### SECONDA PARTE - COMPRESSIONE JPEG
+                    storedImage = Image.open(BMP_PATH)
+                    storedImage.show();
+                    
+                    #Passo dal canale RGB al canale in scala di grigi
+                    greyScale = storedImage.convert('L')
+                    arraIm = numpy.array(greyScale)
+                    
+                    #Estraggo le dimensioni dell'immagine
+                    nrow = arraIm.shape[0]
+                    ncol = arraIm.shape[1]
+                    
+                    #Primo passo: applico la DCT all'intera immagine
+                    imageVert = dct(dct(arraIm.T,norm='ortho').T, norm='ortho')                    
+                    
+                    #Secondo passo: azzeramento delle frequenze scelte dall'utente                     
+                    if A_OR_B=='A' or A_OR_B=='a':
+                        print('a')
+                        for kkm in range(0,nrow):
+                            for kkn in range(0,ncol):
+                                if kkm>=K and kkn>=L:
+                                    imageVert[kkm][kkn]=0
+                    elif A_OR_B=='B' or A_OR_B=='b':
+                        print('b')
+                        for kkm in range(0,nrow):
+                            for kkn in range(0,ncol):
+                                if kkm>=K or kkn>=L:
+                                    imageVert[kkm][kkn]=0
+                                    
+                    #Terzo step       
+                    invertedVer = idct(idct(imageVert.T, norm='ortho').T, norm='ortho')
+                    
+                    #Quarto step
+                    for kkm in range(0,nrow):
+                        for kkn in range(0,ncol):            
+                            #Arrotondo tutti i valori all'intero pi� vicino
+                            invertedVer[kkm][kkn]=round(invertedVer[kkm][kkn])
+                                                         
+                            #I valori negativi o superiori a 255 vengono aggiustati  
+                            if invertedVer[kkm][kkn]<=0:
+                                invertedVer[kkm][kkn]=0                    
+                            if invertedVer[kkm][kkn]>=255:
+                                invertedVer[kkm][kkn]=255
+                                        
+                    #Stampa nuovo risultato           
+                    rgbArray = numpy.zeros((nrow,ncol,3), 'uint8')
+                    rgbArray[..., 0] = invertedVer
+                    rgbArray[..., 1] = invertedVer
+                    rgbArray[..., 2] = invertedVer
+                    img = Image.fromarray(rgbArray)
+                    img.show()
             else:
                 # impossibile entrare in questo branch
                 pass
@@ -96,8 +144,8 @@ class NewGui:
         # start the GUI
         app.go()
 
-		
-		
+        
+        
 ############################## CONTROLLO DELLA DCT
 #INPUT: 'v' o 'V' per controllare il vettore, 'm' o 'M' per controllare la matrice
 #OUTPUT: un vettore o una matrice con valori nello spazio delle frequenze
@@ -185,72 +233,8 @@ def compareDCTs(*args):
     pylab.legend(loc='upper right')
     pylab.show()
     
-    
-    
-############################################### SECONDA PARTE - COMPRESSIONE JPEG
-def main(*args):
-    
-    #Salvataggio del path dell'immagine C, caricamento immagine e stampa
-    storedImage = Image.open(BMP_PATH)
-    storedImage.show()
-    
-    #Passo dal canale RGB al canale in scala di grigi
-    greyScale = storedImage.convert('L')
-    arraIm = numpy.array(greyScale)
-    
-    #Estraggo le dimensioni dell'immagine
-    nrow = arraIm.shape[0]
-    ncol = arraIm.shape[1]
-    
-    #Primo passo: applico la DCT all'intera immagine
-    imageVert = dct(dct(arraIm.T,norm='ortho').T, norm='ortho')
-    
-    #Secondo passo: azzeramento delle frequenze scelte dall'utente     
-    param1=args[0]
-    param2=args[1]
-    mode=args[2]
-    if mode=='A' or mode=='a':
-        print('a')
-        for kkm in range(0,nrow):
-            for kkn in range(0,ncol):
-                if kkm>=param1 and kkn>=param2:
-                    imageVert[kkm][kkn]=0
-    elif mode=='B' or mode=='b':
-        print('b')
-        for kkm in range(0,nrow):
-            for kkn in range(0,ncol):
-                if kkm>=param1 or kkn>=param2:
-                    imageVert[kkm][kkn]=0
-                    
-        #Terzo step       
-        invertedVer = idct(idct(imageVert.T, norm='ortho').T, norm='ortho')
-    
-        #Quarto step
-        for kkm in range(0,nrow):
-            for kkn in range(0,ncol):  
-            
-            #Arrotondo tutti i valori all'intero pi� vicino
-                invertedVer[kkm][kkn]=round(invertedVer[kkm][kkn])
-             
-                #I valori negativi o superiori a 255 vengono aggiustati  
-                if invertedVer[kkm][kkn]<=0:
-                    invertedVer[kkm][kkn]=0                    
-                if invertedVer[kkm][kkn]>=255:
-                    invertedVer[kkm][kkn]=255
-                    
-                #Stampa nuovo risultato           
-                rgbArray = numpy.zeros((nrow,ncol,3), 'uint8')
-                rgbArray[..., 0] = invertedVer
-                rgbArray[..., 1] = invertedVer
-                rgbArray[..., 2] = invertedVer
-                img = Image.fromarray(rgbArray)
-                img.show()           
-                img.save('out.jpg')                     
-    else:
-        print("Wrong input parameters")        
 
-		
-		
+    
 ##################################################### Versione casalinga della DCT            
 def myDCT(y):
     N = len(y)
@@ -268,7 +252,7 @@ def myDCT(y):
         c.append(a*summation)
     return c
 
-	
+    
 
 ###################################################### Versione casalinga della DCT inversa
 def myIDCT(y):
@@ -287,8 +271,8 @@ def myIDCT(y):
         c.append(summation)
     return c
 
-	
-	
+    
+    
 ###################################################### Modulo principale    
 if __name__ == '__main__':
     #main(argv)
