@@ -1,15 +1,68 @@
-from tkinter import Tk, Frame, BOTH, filedialog
-from PIL import Image
-import numpy
-from tkinter.ttk import Button
-from scipy.fftpack.realtransforms import dct
-from scipy.fftpack.realtransforms import idct
 import math
-import pylab
 from datetime import datetime
 from sys import argv
+from tkinter import Tk, Frame, BOTH, filedialog
+from tkinter.ttk import Button
+
+import numpy
+import pylab
+from PIL import Image
 from appJar import gui
+from scipy.fftpack.realtransforms import dct
+from scipy.fftpack.realtransforms import idct
+
 global C
+
+
+class NewGui:
+    def __init__(self):
+        # create the GUI & set a title
+        app = gui("Jay Compressor", "600x240")
+        app.setGuiPadding(20, 10)
+        app.setPadding([0,8])
+
+
+        def press(btnName):
+            if btnName == "Quit":
+                app.stop()
+            else:
+                return
+
+        def selectImage(self):
+            file = filedialog.askopenfile(mode='rb',title='Choose a file')
+            if file is not None:
+                global C
+                C = file.name
+                app.setEntry("entryImagePath", C, callFunction=False)
+                file.close()
+            return
+
+        app.addLabel("labelSelectImage", "Select BMP file:", 0, 0, 4)
+        app.addEntry("entryImagePath", 1, 0, 3)
+        app.addButton("...", selectImage, 1, 3)
+
+        app.addLabel("labelType", "Type:", 2, 0)
+        app.addRadioButton("radioBtnType", "A", 2, 1)
+        app.addRadioButton("radioBtnType", "B", 2, 2)
+
+        app.addLabel("label_l", "l:", 3, 0)
+        app.addEntry("entry_l", 3, 1)
+        app.setEntryWidth("entry_l", 2)
+        app.addLabel("label_k", "k:", 3, 2)
+        app.addEntry("entry_k", 3, 3)
+        app.setEntryWidth("entry_k", 2)
+
+        app.addButtons( ["Submit", "Quit"], press, colspan=4)
+
+        # add some enhancements
+        app.setLabelAlign("labelSelectImage", "left")
+        app.setLabelAlign("labelType", "right")
+        app.setLabelAlign("label_k", "right")
+        app.setLabelAlign("label_l", "right")
+        app.setFocus("entryImagePath")
+
+        # start the GUI
+        app.go()
 
 
 class Example(Frame):  
@@ -37,45 +90,6 @@ class Example(Frame):
             global C
             C = file.name      
             file.close()  
-
-class NewGui:
-    def __init__(self):
-        # create the GUI & set a title
-        app = gui("Jay Compressor", "500x380")
-
-        def press(btnName):
-            if btnName == "Cancel":
-                app.stop()
-                return
-
-            if app.getEntry("userEnt") == "rjarvis":
-                if app.getEntry("passEnt") == "abc":
-                    app.infoBox("Success", "Congratulations, you are logged in!")
-                else:
-                    app.errorBox("Failed login", "Invalid password")
-            else:
-                app.errorBox("Failed login", "Invalid username")
-
-        def selectImage():
-            return
-
-        # add labels & entries
-        # in the correct row & column
-        app.addLabel("labelSelectImage", "Select BMP file:", 0, 0)
-        app.addEntry("entryImagePath", 1, 1)
-        app.addButton("...", selectImage, 1, 2)
-        app.addLabel("passLab", "Password:", 1, 0)
-        app.addSecretEntry("passEnt", 1, 1)
-
-        # changed this line to call a function
-        app.addButtons( ["Submit", "Cancel"], press, colspan=2)
-
-        # add some enhancements
-        app.setFocus("entryImagePath")
-        app.enableEnter(press)
-
-        # start the GUI
-        app.go()
 
 
 ############################## CONTROLLO DELLA DCT
@@ -273,4 +287,5 @@ def myIDCT(y):
 
 #Modulo principale    
 if __name__ == '__main__':
-    main(argv)
+    #main(argv)
+    NewGui()
