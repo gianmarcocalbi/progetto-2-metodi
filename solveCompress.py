@@ -10,7 +10,7 @@ from scipy.fftpack.realtransforms import dct
 from scipy.fftpack.realtransforms import idct
 
 # VARIABILI GLOBALI
-BMP_PATH = K = L = TYPE = None
+BMP_PATH = K = L = A_OR_B = None
 
 
 class NewGui:
@@ -22,21 +22,32 @@ class NewGui:
 
 
         def press(btnName):
-            global BMP_PATH, K, L
+            global BMP_PATH, K, L, A_OR_B
             if btnName == "Quit":
                 app.stop()
             elif btnName == "Submit":
                 BMP_PATH = app.getEntry("entryImagePath")
-                K = app.getEntry("entry_k")
-                L = app.getEntry("entry_l")
+                A_OR_B = app.getRadioButton("radioBtnType")
+                print(A_OR_B)
+                try:
+                    K = int(app.getEntry("entry_k"))
+                except ValueError:
+                    K = -1
+                    pass
+
+                try:
+                    L = int(app.getEntry("entry_l"))
+                except ValueError:
+                    L = -1
+                    pass
 
                 if BMP_PATH is "":
                     app.errorBox("Missing image", "Select a valid image before submitting")
                 elif False: # Se l'immagine non è valida per formato, path o che altro# Se l'immagine non è valida per formato, path o che altro
                     app.errorBox("Wrong image path", "Select a valid BPM image")
-                elif not isinstance(K, int):
+                elif K < 0:
                     app.errorBox("Wrong K value", "Be sure to fill K field with an integer value")
-                elif not isinstance(L, int):
+                elif L < 0:
                     app.errorBox("Wrong L value", "Be sure to fill L field with an integer value")
                 else:
                     pass
@@ -64,12 +75,14 @@ class NewGui:
         app.addRadioButton("radioBtnType", "A", 2, 1)
         app.addRadioButton("radioBtnType", "B", 2, 2)
 
-        app.addLabel("label_l", "l:", 3, 0)
-        app.addEntry("entry_l", 3, 1)
-        app.setEntryWidth("entry_l", 2)
-        app.addLabel("label_k", "k:", 3, 2)
-        app.addEntry("entry_k", 3, 3)
+        app.addLabel("label_k", "k:", 3, 0)
+        app.addEntry("entry_k", 3, 1)
         app.setEntryWidth("entry_k", 2)
+        app.setEntry("entry_k", "0", callFunction = False)
+        app.addLabel("label_l", "l:", 3, 2)
+        app.addEntry("entry_l", 3, 3)
+        app.setEntryWidth("entry_l", 2)
+        app.setEntry("entry_l", "0", callFunction = False)
 
         app.addButtons( ["Submit", "Quit"], press, colspan=4)
 
