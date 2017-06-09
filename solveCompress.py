@@ -1,8 +1,6 @@
 import math
 from datetime import datetime
-from sys import argv
-from tkinter import Tk, Frame, BOTH, filedialog
-from tkinter.ttk import Button
+from tkinter import Tk, filedialog
 
 import numpy
 import pylab
@@ -64,7 +62,7 @@ class NewGui:
         # start the GUI
         app.go()
 
-
+"""
 class Example(Frame):  
     def __init__(self, parent):
         Frame.__init__(self, parent, background="white")         
@@ -90,7 +88,7 @@ class Example(Frame):
             global C
             C = file.name      
             file.close()  
-
+"""
 
 ############################## CONTROLLO DELLA DCT
 #INPUT: 'v' o 'V' per controllare il vettore, 'm' o 'M' per controllare la matrice
@@ -214,13 +212,13 @@ def main(*args):
         print('a')
         for kkm in range(0,nrow):
             for kkn in range(0,ncol):
-                if(kkm>=param1 and kkn>=param2):
+                if kkm>=param1 and kkn>=param2:
                     imageVert[kkm][kkn]=0
     elif mode=='B' or mode=='b':
         print('b')
         for kkm in range(0,nrow):
             for kkn in range(0,ncol):
-                if(kkm>=param1 or kkn>=param2):
+                if kkm>=param1 or kkn>=param2:
                     imageVert[kkm][kkn]=0
                     
         #Terzo step       
@@ -234,9 +232,9 @@ def main(*args):
                 invertedVer[kkm][kkn]=round(invertedVer[kkm][kkn])
              
                 #I valori negativi o superiori a 255 vengono aggiustati  
-                if(invertedVer[kkm][kkn]<=0):
+                if invertedVer[kkm][kkn]<=0:
                     invertedVer[kkm][kkn]=0                    
-                if(invertedVer[kkm][kkn]>=255):
+                if invertedVer[kkm][kkn]>=255:
                     invertedVer[kkm][kkn]=255
                     
                 #Stampa nuovo risultato           
@@ -256,7 +254,7 @@ def myDCT(y):
     c = []    
     for u in range(0,N):
         summation = 0
-        if(u==0):
+        if u==0:
             a=numpy.sqrt(1/N)
         else:
             a=numpy.sqrt(2/N)
@@ -264,7 +262,7 @@ def myDCT(y):
         for i in range(0,N):
             summation = summation + y[i]*math.cos(u*math.pi*((2*i+1)/(2*N)))
     
-        c.append(a*summation);
+        c.append(a*summation)
     return c
 
 
@@ -276,13 +274,13 @@ def myIDCT(y):
         summation = 0
         
         for u in range(0,N):
-            if(u==0):
+            if u==0:
                 a=numpy.sqrt(1/N)
             else:
                 a=numpy.sqrt(2/N)
             summation = summation + a*y[u]*math.cos(u*math.pi*((2*i+1)/(2*N)))
     
-        c.append(summation);
+        c.append(summation)
     return c
 
 #Modulo principale    
