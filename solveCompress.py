@@ -151,11 +151,9 @@ def checkMyDCT(*args):
 def primaParte(*args):  
     minRang=8
     maxRang=17
-    if len(args)==2 and args[0]<args[1] :
+    if len(args)==2:
         minRang=args[0]
         maxRang=args[1]
-    else:
-        print('I valori inseriti non sono coerenti. La procedura richiede che A < B')
     
     #Array dei risultati
     timeLIB = []
