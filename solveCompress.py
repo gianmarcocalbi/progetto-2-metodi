@@ -83,6 +83,8 @@ class NewGui:
         # start the GUI
         app.go()
 
+		
+		
 ############################## CONTROLLO DELLA DCT
 #INPUT: 'v' o 'V' per controllare il vettore, 'm' o 'M' per controllare la matrice
 #OUTPUT: un vettore o una matrice con valori nello spazio delle frequenze
@@ -120,7 +122,7 @@ def checkMyDCT(*args):
 ########################### PRIMA PARTE DEL PROGETTO - COMPARAZIONE DCT
 #INPUT OPZIONALI: due interi a,b tali che a < b.
 #INPUT STANDARD: range da 8 a 17
-def primaParte(*args):  
+def compareDCTs(*args):  
     minRang=8
     maxRang=17
     if len(args)==2:
@@ -174,11 +176,6 @@ def primaParte(*args):
     
 ############################################### SECONDA PARTE - COMPRESSIONE JPEG
 def main(*args):
-    #Avvio dell'interfaccia per selezionare l'immagine
-    """root = Tk()
-    root.geometry("750x200+300+300")
-    NewGui(root)
-    root.mainloop()"""
     
     #Salvataggio del path dell'immagine C, caricamento immagine e stampa
     storedImage = Image.open(BMP_PATH)
@@ -239,7 +236,9 @@ def main(*args):
     else:
         print("Wrong input parameters")        
 
-#Versione casalinga della DCT            
+		
+		
+##################################################### Versione casalinga della DCT            
 def myDCT(y):
     N = len(y)
     c = []    
@@ -256,8 +255,9 @@ def myDCT(y):
         c.append(a*summation)
     return c
 
+	
 
-#Versione casalinga della DCT inversa
+###################################################### Versione casalinga della DCT inversa
 def myIDCT(y):
     N = len(y)
     c = []    
@@ -274,7 +274,9 @@ def myIDCT(y):
         c.append(summation)
     return c
 
-#Modulo principale    
+	
+	
+###################################################### Modulo principale    
 if __name__ == '__main__':
     #main(argv)
     NewGui()
