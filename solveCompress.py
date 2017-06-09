@@ -83,34 +83,6 @@ class NewGui:
         # start the GUI
         app.go()
 
-"""
-class Example(Frame):  
-    def __init__(self, parent):
-        Frame.__init__(self, parent, background="white")         
-        self.parent = parent        
-        self.initUI()
-        
-    
-    def initUI(self):
-      
-        self.parent.title("DCT2 algorithm")
-        self.pack(fill=BOTH, expand=1)
-
-        chooseButton = Button(self, text="Select image..",command=self.askopenfile)
-        chooseButton.place(x=100, y=150)
-
-        quitButton = Button(self, text="Exit",command=self.quit)
-        quitButton.place(x=600, y=150)
-
-
-    def askopenfile(self):
-        file = filedialog.askopenfile(mode='rb',title='Choose a file')
-        if file != None:
-            global C
-            C = file.name      
-            file.close()  
-"""
-
 ############################## CONTROLLO DELLA DCT
 #INPUT: 'v' o 'V' per controllare il vettore, 'm' o 'M' per controllare la matrice
 #OUTPUT: un vettore o una matrice con valori nello spazio delle frequenze
