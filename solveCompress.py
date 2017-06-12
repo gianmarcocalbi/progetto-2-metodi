@@ -193,13 +193,15 @@ def compareDCTs(*args):
     #Array dei risultati
     timeLIB = []
     timeMINE = []
-    sizes = []  
-    
+    sizes = []
     #Elaborazione delle matrici di dimensione da A a B
     for countTurns in range(minRang,maxRang):
+        # chiudere il plot precedente!
         singleBlock = numpy.random.randint(255, size=(countTurns,countTurns))   
         sizes.append(countTurns)  
-        
+
+        print(countTurns)
+
         #Computazione della libreria
         tLIBs = datetime.now()
         dct(dct(singleBlock.T, norm='ortho').T, norm='ortho')
@@ -221,7 +223,10 @@ def compareDCTs(*args):
         tMINEe = datetime.now()
         elapsedMINE = tMINEe - tMINEs
         timeMINE.append(elapsedMINE.microseconds)     
-        print('mat: ',elapsedMINE.microseconds)        
+        print('mat: ', elapsedMINE.microseconds)
+
+        print('tMINEs: ', tMINEs)
+        print('tMINEe: ', tMINEe)
         
     #Plotto i grafici con legenda
     pylab.figure(1)
