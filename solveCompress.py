@@ -1,5 +1,5 @@
 import math
-from datetime import datetime
+import time
 from tkinter import filedialog
 
 import numpy
@@ -53,19 +53,19 @@ class NewGui:
                     ############################################### SECONDA PARTE - COMPRESSIONE JPEG
                     storedImage = Image.open(BMP_PATH)
                     storedImage.show()
-                    
+
                     #Passo dal canale RGB al canale in scala di grigi
                     greyScale = storedImage.convert('L')
                     arraIm = numpy.array(greyScale)
-                    
+
                     #Estraggo le dimensioni dell'immagine
                     nrow = arraIm.shape[0]
                     ncol = arraIm.shape[1]
-                    
+
                     #Primo passo: applico la DCT all'intera immagine
-                    imageVert = dct(dct(arraIm.T,norm='ortho').T, norm='ortho')                    
-                    
-                    #Secondo passo: azzeramento delle frequenze scelte dall'utente                     
+                    imageVert = dct(dct(arraIm.T,norm='ortho').T, norm='ortho')
+
+                    #Secondo passo: azzeramento delle frequenze scelte dall'utente
                     if A_OR_B=='A' or A_OR_B=='a':
                         print('a')
                         for kkm in range(0,nrow):
@@ -78,23 +78,23 @@ class NewGui:
                             for kkn in range(0,ncol):
                                 if kkm>=K or kkn>=L:
                                     imageVert[kkm][kkn]=0
-                                    
-                    #Terzo step       
+
+                    #Terzo step
                     invertedVer = idct(idct(imageVert.T, norm='ortho').T, norm='ortho')
-                    
+
                     #Quarto step
                     for kkm in range(0,nrow):
-                        for kkn in range(0,ncol):            
-                            #Arrotondo tutti i valori all'intero pi� vicino
+                        for kkn in range(0,ncol):
+                            #Arrotondo tutti i valori all'intero più vicino
                             invertedVer[kkm][kkn]=round(invertedVer[kkm][kkn])
-                                                         
-                            #I valori negativi o superiori a 255 vengono aggiustati  
+
+                            #I valori negativi o superiori a 255 vengono aggiustati
                             if invertedVer[kkm][kkn]<=0:
-                                invertedVer[kkm][kkn]=0                    
+                                invertedVer[kkm][kkn]=0
                             if invertedVer[kkm][kkn]>=255:
                                 invertedVer[kkm][kkn]=255
-                                        
-                    #Stampa nuovo risultato           
+
+                    #Stampa nuovo risultato
                     rgbArray = numpy.zeros((nrow,ncol,3), 'uint8')
                     rgbArray[..., 0] = invertedVer
                     rgbArray[..., 1] = invertedVer
@@ -143,34 +143,34 @@ class NewGui:
         # start the GUI
         app.go()
 
-        
-        
+
+
 ############################## CONTROLLO DELLA DCT
 #INPUT: 'v' o 'V' per controllare il vettore, 'm' o 'M' per controllare la matrice
 #OUTPUT: un vettore o una matrice con valori nello spazio delle frequenze
-def checkMyDCT(*args):   
+def checkMyDCT(*args):
     #Controllo  del vettore
     if args[0]=='v' or args[0]=='V':
-        y = [231, 32, 233, 161, 24, 71, 140, 245]    
+        y = [231, 32, 233, 161, 24, 71, 140, 245]
         libSingleDCT = dct(y, norm='ortho')
         mySingleDCT = myDCT(y)
         print(libSingleDCT)
         print(mySingleDCT)
-    else:    
+    else:
         #Controllo  della matrice
         if args[0]=='m' or args[0]=='M':
             y2 = numpy.matrix('231 32 233 161 24 71 140 245; 247 40 248 245 124 204 36 107; 234 202 245 167 9 217 239 173; 193 190 100 167 43 180 8 70; 11 24 210 177 81 243 8 112; 97 195 203 47 125 114 165 181; 193 70 174 167 41 30 127 245; 87 149 57 192 65 129 178 228')
             libDCT = dct(dct(y2.T, norm='ortho').T, norm='ortho')
-        
+
             myHorizzy = numpy.zeros((8,8))
             myVerty = numpy.zeros((8,8))
             for jk in range(0,8):
                 myHorizzy[jk]=dct(y2[jk], norm='ortho')
-            myHorizzy = myHorizzy.transpose()    
+            myHorizzy = myHorizzy.transpose()
             for jk in range(0,8):
                 myVerty[jk]=dct(myHorizzy[jk], norm='ortho')
             myVerty = myVerty.transpose()
-            
+
             print(libDCT)
             print('\n\n')
             print(myVerty)
@@ -182,13 +182,13 @@ def checkMyDCT(*args):
 ########################### PRIMA PARTE DEL PROGETTO - COMPARAZIONE DCT
 #INPUT OPZIONALI: due interi a,b tali che a < b.
 #INPUT STANDARD: range da 8 a 17
-def compareDCTs(*args):  
+def compareDCTs(*args):
     minRang=8
     maxRang=17
     if len(args)==2:
         minRang=args[0]
         maxRang=args[1]
-    
+
     #Array dei risultati
     timeLIB = []
     timeMINE = []
@@ -196,87 +196,87 @@ def compareDCTs(*args):
     #Elaborazione delle matrici di dimensione da A a B
     for countTurns in range(minRang,maxRang):
         # chiudere il plot precedente!
-        singleBlock = numpy.random.randint(255, size=(countTurns,countTurns))   
-        sizes.append(countTurns)  
+        singleBlock = numpy.random.randint(255, size=(countTurns,countTurns))
+        sizes.append(countTurns)
 
         print(countTurns)
 
         #Computazione della libreria
-        tLIBs = datetime.now()
+        tLIBs = time.time()
         dct(dct(singleBlock.T, norm='ortho').T, norm='ortho')
-        tLIBe = datetime.now()
+        tLIBe = time.time()
         elapsedLIB = tLIBe-tLIBs
-        timeLIB.append(elapsedLIB.microseconds)
-        print('lib: ', elapsedLIB.microseconds)
-                
-        #Computazione della DCT casalinga        
-        tMINEs = datetime.now()
+        timeLIB.append(elapsedLIB)
+        print('lib: ', elapsedLIB)
+
+        #Computazione della DCT casalinga
+        tMINEs = time.time()
         myHordct = numpy.zeros((countTurns,countTurns))
         myVerdct = numpy.zeros((countTurns,countTurns))
         for jk in range(0,countTurns):
             myHordct[jk]=myDCT(singleBlock[jk])
-        myHordct = myHordct.transpose()    
+        myHordct = myHordct.transpose()
         for jk in range(0,countTurns):
             myVerdct[jk]=myDCT(myHordct[jk])
         myVerdct = myVerdct.transpose()
-        tMINEe = datetime.now()
+        tMINEe = time.time()
         elapsedMINE = tMINEe - tMINEs
-        timeMINE.append(elapsedMINE.microseconds)     
-        print('mat: ', elapsedMINE.microseconds)
+        timeMINE.append(elapsedMINE)
+        print('mat: ', elapsedMINE)
 
         print('tMINEs: ', tMINEs)
         print('tMINEe: ', tMINEe)
-        
+
     #Plotto i grafici con legenda
     pylab.figure(1)
     pylab.title('Elapsed Time')
     pylab.xlabel('Matrix dimension')
     pylab.ylabel('Time (microsec)')
-    pylab.plot(sizes, timeLIB, marker='.', alpha=1, color='b', label="Library DCT")       
+    pylab.plot(sizes, timeLIB, marker='.', alpha=1, color='b', label="Library DCT")
     pylab.plot(sizes, timeMINE, marker='.', alpha=1, color='r', label='Homemade DCT')
     pylab.legend(loc='upper right')
     pylab.show()
-    
 
-    
+
+
 ##################################################### Versione casalinga della DCT            
 def myDCT(y):
     N = len(y)
-    c = []    
+    c = []
     for u in range(0,N):
         summation = 0
         if u==0:
             a=numpy.sqrt(1/N)
         else:
             a=numpy.sqrt(2/N)
-    
+
         for i in range(0,N):
             summation = summation + y[i]*math.cos(u*math.pi*((2*i+1)/(2*N)))
-    
+
         c.append(a*summation)
     return c
 
-    
+
 
 ###################################################### Versione casalinga della DCT inversa
 def myIDCT(y):
     N = len(y)
-    c = []    
-    for i in range(0,N):    
+    c = []
+    for i in range(0,N):
         summation = 0
-        
+
         for u in range(0,N):
             if u==0:
                 a=numpy.sqrt(1/N)
             else:
                 a=numpy.sqrt(2/N)
             summation = summation + a*y[u]*math.cos(u*math.pi*((2*i+1)/(2*N)))
-    
+
         c.append(summation)
     return c
 
-    
-    
+
+
 ###################################################### Modulo principale    
 if __name__ == '__main__':
     #main(argv)
