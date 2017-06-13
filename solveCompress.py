@@ -1,6 +1,6 @@
 import math
 from datetime import datetime
-from tkinter import Tk, filedialog
+from tkinter import filedialog
 
 import numpy
 import pylab
@@ -28,7 +28,6 @@ class NewGui:
             elif btnName == "Submit":
                 BMP_PATH = app.getEntry("entryImagePath")
                 A_OR_B = app.getRadioButton("radioBtnType")
-                print(A_OR_B)
                 try:
                     K = int(app.getEntry("entry_k"))
                 except ValueError:
@@ -53,7 +52,7 @@ class NewGui:
                     pass
                     ############################################### SECONDA PARTE - COMPRESSIONE JPEG
                     storedImage = Image.open(BMP_PATH)
-                    storedImage.show();
+                    storedImage.show()
                     
                     #Passo dal canale RGB al canale in scala di grigi
                     greyScale = storedImage.convert('L')
