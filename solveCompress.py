@@ -8,6 +8,7 @@ from PIL import Image
 from appJar import gui
 from scipy.fftpack.realtransforms import dct
 from scipy.fftpack.realtransforms import idct
+import os
 
 # VARIABILI GLOBALI
 BMP_PATH = K = L = A_OR_B = None
@@ -79,28 +80,30 @@ class NewGui:
                                 if kkm>=K or kkn>=L:
                                     imageVert[kkm][kkn]=0
 
-                    #Terzo step
+                    #Terzo step, applicazione della IDCT
                     invertedVer = idct(idct(imageVert.T, norm='ortho').T, norm='ortho')
 
-                    #Quarto step
+                    #Quarto step, arrotondamento e sistemazione dei valori dei pixel
                     for kkm in range(0,nrow):
                         for kkn in range(0,ncol):
+                            
                             #Arrotondo tutti i valori all'intero più vicino
                             invertedVer[kkm][kkn]=round(invertedVer[kkm][kkn])
 
-                            #I valori negativi o superiori a 255 vengono aggiustati
+                            #I valori negativi o superiori a 255 vengono aggiustati (per avere un intervallo [0,255])
                             if invertedVer[kkm][kkn]<=0:
                                 invertedVer[kkm][kkn]=0
                             if invertedVer[kkm][kkn]>=255:
                                 invertedVer[kkm][kkn]=255
 
-                    #Stampa nuovo risultato
+                    #Stampa nuovo risultato e salva immagine output
                     rgbArray = numpy.zeros((nrow,ncol,3), 'uint8')
                     rgbArray[..., 0] = invertedVer
                     rgbArray[..., 1] = invertedVer
                     rgbArray[..., 2] = invertedVer
                     img = Image.fromarray(rgbArray)
                     img.show()
+                    img.save(os.path.join(os.getcwd(),'compressedImg.jpg'), 'JPEG')                    
             else:
                 # impossibile entrare in questo branch
                 pass
@@ -171,6 +174,7 @@ def checkMyDCT(*args):
                 myVerty[jk]=dct(myHorizzy[jk], norm='ortho')
             myVerty = myVerty.transpose()
 
+            #Stampa del risultato ottenuto da homemade e fast DCT. Si devono confrontare entrambe con la DCT di MATLAB
             print(libDCT)
             print('\n\n')
             print(myVerty)
@@ -193,9 +197,9 @@ def compareDCTs(*args):
     timeLIB = []
     timeMINE = []
     sizes = []
+    
     #Elaborazione delle matrici di dimensione da A a B
     for countTurns in range(minRang,maxRang):
-        # chiudere il plot precedente!
         singleBlock = numpy.random.randint(255, size=(countTurns,countTurns))
         sizes.append(countTurns)
 
@@ -223,9 +227,6 @@ def compareDCTs(*args):
         elapsedMINE = tMINEe - tMINEs
         timeMINE.append(elapsedMINE)
         print('mat: ', elapsedMINE)
-
-        print('tMINEs: ', tMINEs)
-        print('tMINEe: ', tMINEe)
 
     #Plotto i grafici con legenda
     pylab.figure(1)
@@ -277,7 +278,7 @@ def myIDCT(y):
 
 
 
-###################################################### Modulo principale    
+###################################################### Modulo principale che richiama l'interfaccia grafica    
 if __name__ == '__main__':
     #main(argv)
     NewGui()
